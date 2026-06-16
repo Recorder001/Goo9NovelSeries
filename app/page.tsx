@@ -9,8 +9,8 @@ export default async function HomePage() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-12">
       <section className="mb-10">
-        <h1 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight">작품 전시관</h1>
-        <p className="mt-3 text-[var(--muted)]">Goo9가 쓴 이야기들을 모았습니다.</p>
+        <h1 className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight">Novels</h1>
+        <p className="mt-3 text-[var(--muted)]">이 넓은 우주에서 기적처럼 만난, 이야기들의 교차점.</p>
       </section>
 
       {novels.length === 0 ? (

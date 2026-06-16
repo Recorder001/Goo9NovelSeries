@@ -3,7 +3,7 @@ import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Goo9 Novel Series',
+  title: 'Goo9 Novels',
   description: 'Goo9의 웹소설 전시관',
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur sticky top-0 z-40">
           <div className="mx-auto max-w-5xl px-5 h-16 flex items-center justify-between">
             <Link href="/" className="font-serif text-xl font-extrabold tracking-tight">
-              Goo9 <span className="text-[var(--muted)] font-normal">Novel Series</span>
+              Goo9 <span className="text-[var(--muted)] font-normal">Novels</span>
             </Link>
             <nav className="flex items-center gap-5 text-sm text-[var(--muted)]">
               <Link href="/" className="hover:text-[var(--text)] transition">작품</Link>
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex-1">{children}</main>
         <footer className="border-t border-[var(--border)] mt-16">
           <div className="mx-auto max-w-5xl px-5 py-8 text-sm text-[var(--muted)]">
-            © {new Date().getFullYear()} Goo9 Novel Series
+            © {new Date().getFullYear()} Goo9 Universe Novel Series.
           </div>
         </footer>
       </body>
