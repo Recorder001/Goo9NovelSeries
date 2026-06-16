@@ -26,6 +26,19 @@ body {
 .reader-shell[data-theme='sepia'] { background: #f4ecd8; }
 .reader-shell[data-theme='sepia'] .reader-paper { background: #faf3e0; }
 
+/* 다크 테마: 리더 영역 안에서만 색 변수를 재정의해 헤더·버튼·테두리까지 함께 어둡게 */
+.reader-shell[data-theme='dark'] {
+  --bg: #161718;
+  --surface: #1f2022;
+  --text: #e6e3dd;
+  --muted: #9b968d;
+  --border: #3a3b3e;
+  background: #161718;
+}
+.reader-shell[data-theme='dark'] .reader-paper { background: #1f2022; }
+/* 작가가 색을 따로 지정하지 않은 본문 텍스트는 밝게 보정 (지정한 색은 그대로 유지) */
+.reader-shell[data-theme='dark'] .reader-content { color: #ddd9d2; }
+
 .reader-paper {
   max-width: var(--reader-max);
   margin: 0 auto;

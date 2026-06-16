@@ -28,7 +28,7 @@ export default async function HomePage() {
               href={`/novel/${n.slug}`}
               className="group rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--surface)] hover:shadow-lg hover:-translate-y-0.5 transition"
             >
-              <div className="aspect-[3/4] bg-[var(--bg)] overflow-hidden">
+              <div className="aspect-[2/3] bg-[var(--bg)] overflow-hidden">
                 {n.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={n.coverImage} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition" />

@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur sticky top-0 z-40">
           <div className="mx-auto max-w-5xl px-5 h-16 flex items-center justify-between">
             <Link href="/" className="font-serif text-xl font-extrabold tracking-tight">
-              Goo9 <span className="text-[var(--muted)] font-normal">Novels</span>
+              Goo9 <span className="text-[var(--muted)] font-extrabold">Novels</span>
             </Link>
             <nav className="flex items-center gap-5 text-sm text-[var(--muted)]">
               <Link href="/" className="hover:text-[var(--text)] transition">작품</Link>

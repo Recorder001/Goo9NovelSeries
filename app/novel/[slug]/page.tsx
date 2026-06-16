@@ -16,7 +16,7 @@ export default async function NovelPage({ params }: { params: Promise<{ slug: st
 
       <div className="mt-6 flex flex-col sm:flex-row gap-6">
         <div className="w-40 shrink-0 mx-auto sm:mx-0">
-          <div className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
+          <div className="aspect-[2/3] rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
             {novel.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={novel.coverImage} alt={novel.title} className="w-full h-full object-cover" />

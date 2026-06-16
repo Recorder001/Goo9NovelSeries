@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-type Theme = 'light' | 'sepia';
+type Theme = 'light' | 'sepia' | 'dark';
 
 export default function ReaderControls() {
   const [scale, setScale] = useState(1);
@@ -50,6 +50,7 @@ export default function ReaderControls() {
       <span className="text-xs mx-1 ml-3">테마</span>
       <button className={btn} onClick={() => setTheme('light')} aria-pressed={theme === 'light'}>화이트</button>
       <button className={btn} onClick={() => setTheme('sepia')} aria-pressed={theme === 'sepia'}>세피아</button>
+      <button className={btn} onClick={() => setTheme('dark')} aria-pressed={theme === 'dark'}>다크</button>
     </div>
   );
 }
