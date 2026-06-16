@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1f1d1a;
+  --muted: #6b6760;
+  --border: #e7e3dc;
+  --accent: #3b3a36;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- 리더 본문 ---------- */
+.reader-shell {
+  --reader-scale: 1;
+  --reader-max: 720px;
+}
+.reader-shell[data-theme='sepia'] { background: #f4ecd8; }
+.reader-shell[data-theme='sepia'] .reader-paper { background: #faf3e0; }
+
+.reader-paper {
+  max-width: var(--reader-max);
+  margin: 0 auto;
+  background: var(--surface);
+}
+
+/* docx-preview 결과물을 감싸는 영역: 작가가 지정한 서식(색·정렬·폰트)은
+   docx-preview가 주입한 스코프 스타일이 책임지고, 우리는 가독성 기본값만 보정 */
+.reader-content {
+  font-size: calc(1.075rem * var(--reader-scale));
+  line-height: 1.9;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.reader-content .docx-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+}
+.reader-content .docx {
+  box-shadow: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+.reader-content img { max-width: 100%; height: auto; }
+.reader-content p { margin: 0 0 1.1em; }
+
+/* 사이트 기본 산문 영역(설명 등) */
+.prose-basic p { margin: 0 0 1em; line-height: 1.8; }
