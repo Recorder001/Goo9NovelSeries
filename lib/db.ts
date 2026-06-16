@@ -1,11 +1,29 @@
 import 'server-only';
+import { mkdirSync } from 'fs';
+import { dirname } from 'path';
 import { createClient, type Client } from '@libsql/client';
 
 const globalForDb = globalThis as unknown as { _db?: Client; _ready?: Promise<void> };
 
+// DB 경로 결정: DATABASE_URL > Railway 볼륨 자동감지 > 로컬 기본값
+function resolveDbUrl(): string {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  const mount = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+  if (mount) return `file:${mount.replace(/\/+$/, '')}/goo9.db`;
+  return 'file:./dev.db';
+}
+
 function client(): Client {
   if (!globalForDb._db) {
-    const url = process.env.DATABASE_URL || 'file:./dev.db';
+    const url = resolveDbUrl();
+    // 파일 기반 DB면 상위 폴더가 없을 때 만들어줌 (SQLite CANTOPEN(14) 방지)
+    if (url.startsWith('file:')) {
+      const filePath = url.slice('file:'.length).split('?')[0];
+      if (filePath && filePath !== ':memory:') {
+        try { mkdirSync(dirname(filePath), { recursive: true }); } catch {}
+      }
+    }
+    console.log('[db] DATABASE_URL =', url);
     globalForDb._db = createClient({ url });
   }
   return globalForDb._db;
