@@ -23,6 +23,22 @@ body {
   --reader-scale: 1;
   --reader-max: 720px;
 }
+
+/* 테마 전환 부드럽게 (배경·글자·테두리·반전 0.35~0.4s) */
+.reader-shell,
+.reader-shell a,
+.reader-shell div,
+.reader-shell span,
+.reader-shell button {
+  transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+.reader-shell .reader-content {
+  transition: background-color .35s ease, color .35s ease, filter .4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reader-shell, .reader-shell * { transition: none !important; }
+}
+
 .reader-shell[data-theme='sepia'] { background: #f4ecd8; }
 .reader-shell[data-theme='sepia'] .reader-paper { background: #faf3e0; }
 
@@ -36,8 +52,15 @@ body {
   background: #161718;
 }
 .reader-shell[data-theme='dark'] .reader-paper { background: #1f2022; }
-/* 작가가 색을 따로 지정하지 않은 본문 텍스트는 밝게 보정 (지정한 색은 그대로 유지) */
-.reader-shell[data-theme='dark'] .reader-content { color: #ddd9d2; }
+/* 다크: 색 반전으로 검정 글자를 밝게. hue-rotate로 색상(빨강·파랑 등)은 유지하고 밝기만 뒤집음 */
+.reader-shell[data-theme='dark'] .reader-content {
+  color: #1a1a1a;
+  filter: invert(1) hue-rotate(180deg);
+}
+/* 이미지·그림·표는 다시 반전해 원래 색으로 복구 (네거티브 방지) */
+.reader-shell[data-theme='dark'] .reader-content :is(img, svg, video, picture) {
+  filter: invert(1) hue-rotate(180deg);
+}
 
 .reader-paper {
   max-width: var(--reader-max);
