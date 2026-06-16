@@ -15,7 +15,7 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+  font-family: 'Pretendard Variable', 'Pretendard', system-ui, -apple-system, sans-serif;
 }
 
 /* 리더 페이지에서는 상단 사이트 헤더 숨김 (리더 자체 바가 따로 있음) */
