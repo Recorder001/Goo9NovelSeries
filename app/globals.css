@@ -18,6 +18,9 @@ body {
   font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
 }
 
+/* 리더 페이지에서는 상단 사이트 헤더 숨김 (리더 자체 바가 따로 있음) */
+body:has(.reader-shell) > header { display: none; }
+
 /* ---------- 리더 본문 ---------- */
 .reader-shell {
   --reader-scale: 1;
@@ -88,7 +91,7 @@ body {
   margin: 0 !important;
   background: transparent !important;
 }
-.reader-content img { max-width: 100%; height: auto; }
+.reader-content img { max-width: 100%; height: auto; display: block; margin-inline: auto; }
 .reader-content p { margin: 0 0 1.1em; }
 
 /* 사이트 기본 산문 영역(설명 등) */

@@ -14,8 +14,8 @@ export default async function NovelPage({ params }: { params: Promise<{ slug: st
     <div className="mx-auto max-w-3xl px-5 py-12">
       <Link href="/" className="text-sm text-[var(--muted)] hover:text-[var(--text)]">← 전체 작품</Link>
 
-      <div className="mt-6 flex flex-col sm:flex-row gap-6">
-        <div className="w-40 shrink-0 mx-auto sm:mx-0">
+      <div className="mt-6 flex flex-row gap-4 sm:gap-6">
+        <div className="w-32 sm:w-40 shrink-0">
           <div className="aspect-[2/3] rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
             {novel.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -27,7 +27,7 @@ export default async function NovelPage({ params }: { params: Promise<{ slug: st
             )}
           </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <span className="text-xs px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--muted)] border border-[var(--border)]">
             {novel.status}
           </span>
