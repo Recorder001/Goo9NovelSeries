@@ -42,9 +42,11 @@ export type ScrollCfg = {
   previewP: number; // 어드민 미리보기에서 보여줄 고정 진행도
 };
 export const SCROLL_LINKED: Record<string, ScrollCfg> = {
-  dust: { from: 0.65, to: 0.2, latch: false, previewP: 0 },
-  type: { from: 0.92, to: 0.55, latch: true, previewP: 1 },
-  focus: { from: 0.92, to: 0.55, latch: true, previewP: 1 },
+  // 가루: 읽는 구간(중앙)에서는 멀쩡, 화면 위로 빠져나갈 때만 흩어짐
+  dust: { from: 0.3, to: -0.1, latch: false, previewP: 0 },
+  // 등장/또렷: 아래에서 올라와 읽는 위치에 닿을 때 완성(한 번 완성되면 유지)
+  type: { from: 0.95, to: 0.6, latch: true, previewP: 1 },
+  focus: { from: 0.95, to: 0.6, latch: true, previewP: 1 },
 };
 
 function escAttr(s: string): string {
@@ -121,10 +123,31 @@ function applyOptsToEl(el: HTMLElement, opts: string) {
 
 /**
  * 살아있는 DOM에서 [fx:이름]...[/fx] 마커를 <span class="fx fx-이름"> 로 감싼다.
- * - 마커가 태그 경계(여러 run/span)를 가로질러도 Range로 정확히 처리.
+ * - 문단(블록) 단위로 처리해 마커가 블록 경계를 넘지 않도록 한다.
+ * - 한 블록 안에서는 태그 경계(여러 run/span)를 가로질러도 Range로 정확히 처리.
  * - 안쪽 서식 태그는 보존, 모르는 효과는 원문 유지.
  */
 export function wrapMarkersDOM(root: HTMLElement): void {
+  // 마커가 들어있는 "가장 안쪽 블록"들을 찾는다 (블록끼리 텍스트가 섞이지 않게)
+  let scopes = Array.from(
+    root.querySelectorAll<HTMLElement>('p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th, div')
+  ).filter((el) => /\[fx:/i.test(el.textContent ?? ''));
+  // 다른 후보를 포함하는 조상은 제외 → 최내곽 블록만 남김
+  scopes = scopes.filter((el) => !scopes.some((other) => other !== el && el.contains(other)));
+  if (scopes.length === 0) scopes = [root]; // 블록 구조가 없으면 root 전체
+
+  for (const scope of scopes) wrapWithinElement(scope);
+
+  // 변환 과정에서 생긴 빈 껍데기 span(속성 없음·내용 없음) 정리
+  root.querySelectorAll('span').forEach((s) => {
+    if (s.attributes.length === 0 && s.childElementCount === 0 && (s.textContent ?? '') === '') {
+      s.remove();
+    }
+  });
+}
+
+// 한 블록 요소 내부에서만 마커를 변환 (텍스트는 이 요소 범위로 한정)
+function wrapWithinElement(root: HTMLElement): void {
   const rangeOf = (map: { node: Text; start: number }[], from: number, to: number) => {
     const r = document.createRange();
     const a = locate(map, from);
@@ -160,13 +183,6 @@ export function wrapMarkersDOM(root: HTMLElement): void {
     span.appendChild(content.extractContents());
     content.insertNode(span);
   }
-
-  // 변환 과정에서 생긴 빈 껍데기 span(속성 없음·내용 없음) 정리
-  root.querySelectorAll('span').forEach((s) => {
-    if (s.attributes.length === 0 && s.childElementCount === 0 && (s.textContent ?? '') === '') {
-      s.remove();
-    }
-  });
 }
 
 /**
