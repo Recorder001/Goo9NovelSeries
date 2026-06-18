@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getNovelBySlug, getChapterByNumber, listChapters } from '@/lib/db';
 import ReaderControls from '@/components/ReaderControls';
+import ReaderEffects from '@/components/ReaderEffects';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,7 @@ export default async function ReaderPage({ params }: { params: Promise<{ slug: s
           <h1 className="mt-1 font-serif text-2xl font-extrabold">{chapter.title}</h1>
         </header>
         <div className="reader-content" dangerouslySetInnerHTML={{ __html: chapter.contentHtml }} />
+        <ReaderEffects />
       </article>
 
       <nav className="reader-paper px-6 sm:px-10 pb-20 flex items-center justify-between gap-3">

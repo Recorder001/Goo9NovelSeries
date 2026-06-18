@@ -98,3 +98,55 @@ body:has(.reader-shell) > header { display: none; }
 
 /* 사이트 기본 산문 영역(설명 등) */
 .prose-basic p { margin: 0 0 1em; line-height: 1.8; }
+
+/* ---------- 리더 글자 특수효과 (프로토타입) ---------- */
+/* docx 마커 [fx:name]...[/fx] 가 ReaderEffects에서 .fx 로 변환됨 */
+
+/* 1) 떨림 — 공포·추위·분노 */
+.reader-content .fx-shake {
+  display: inline-block;
+  animation: fx-shake 0.12s steps(2, end) infinite;
+}
+@keyframes fx-shake {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-1.2px, 1px); }
+  50%  { transform: translate(1.2px, -1px); }
+  75%  { transform: translate(-1px, -1.2px); }
+  100% { transform: translate(1px, 1.2px); }
+}
+
+/* 2) 글리치 — 디지털 붕괴·환청·시스템 메시지 */
+.reader-content .fx-glitch {
+  display: inline-block;
+  position: relative;
+  animation: fx-glitch 1s steps(1, end) infinite;
+}
+@keyframes fx-glitch {
+  0%   { transform: translate(0); text-shadow: -1px 0 #ff00d4, 1px 0 #00e7ff; clip-path: inset(0 0 0 0); }
+  8%   { transform: translate(-2px, 1px); text-shadow: 2px 0 #ff00d4, -2px 0 #00e7ff; clip-path: inset(0 0 62% 0); }
+  16%  { transform: translate(2px, -1px); clip-path: inset(58% 0 0 0); }
+  24%  { transform: translate(-1px, 0); text-shadow: -2px 0 #ff00d4, 2px 0 #00e7ff; clip-path: inset(0 0 0 0); }
+  40%  { transform: translate(1px, 1px); clip-path: inset(30% 0 35% 0); }
+  48%  { transform: translate(0); text-shadow: -1px 0 #ff00d4, 1px 0 #00e7ff; clip-path: inset(0 0 0 0); }
+  100% { transform: translate(0); text-shadow: -1px 0 #ff00d4, 1px 0 #00e7ff; clip-path: inset(0 0 0 0); }
+}
+
+/* 3) 가루 — 스크롤한 만큼만 흩어짐 (--p: 0~1 진행도, JS가 스크롤로 갱신) */
+.reader-content .fx-dust { display: inline-block; }
+.reader-content .fx-dust .fx-ch {
+  display: inline-block;
+  white-space: pre; /* 공백 글자도 폭 유지 */
+  /* 글자별 지역 진행도: 앞 글자부터 순차적으로(스태거) 흩어짐 */
+  --lp: clamp(0, calc(var(--p, 0) * var(--n, 1) * 1.25 - var(--i, 0)), 1);
+  opacity: calc(1 - var(--lp));
+  transform:
+    translate(calc(var(--dx, 0px) * var(--lp)), calc(var(--dy, 0px) * var(--lp)))
+    rotate(calc(var(--rot, 0deg) * var(--lp)));
+  filter: blur(calc(var(--lp) * 2px));
+  will-change: transform, opacity, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reader-content .fx-shake,
+  .reader-content .fx-glitch { animation: none !important; }
+}
