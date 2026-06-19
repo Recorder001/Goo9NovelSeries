@@ -1,7 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
-import { convertMarkers, EFFECTS } from '@/lib/effects';
-import EffectEditor from '@/components/EffectEditor';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Novel = {
   id: string; slug: string; title: string; author: string; description: string;
@@ -274,44 +272,6 @@ function ChapterManager({ novel, chapters, reload }: { novel: Novel; chapters: C
   );
 }
 
-function FxHelp() {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-3 py-2 text-left"
-      >
-        <span className="font-medium">✨ 글자 특수효과 사용법</span>
-        <span className="text-[var(--muted)]">{open ? '닫기 ▲' : '열기 ▼'}</span>
-      </button>
-      {open && (
-        <div className="px-3 pb-3 space-y-3">
-          <p className="text-[var(--muted)]">
-            원고(.docx)에서 효과를 줄 부분을 아래처럼 감싸면 됩니다. 마커는 서식(굵게·색 등) 변화 없이 한 번에 입력하세요.
-          </p>
-          <pre className="rounded-md bg-[var(--bg)] border border-[var(--border)] p-2 overflow-auto text-xs">{`[fx:shake]덜덜 떨리는 손[/fx]
-[fx:dust]스크롤하면 가루가 되어 사라진다[/fx]
-[fx:wave speed=slow]천천히 출렁이는 글자[/fx]`}</pre>
-          <ul className="grid sm:grid-cols-2 gap-x-4 gap-y-1">
-            {EFFECTS.map((e) => (
-              <li key={e.name} className="flex gap-2">
-                <code className="shrink-0 rounded bg-[var(--bg)] px-1.5 py-0.5 text-xs">{e.name}</code>
-                <span className="text-[var(--muted)]">{e.label} · {e.desc}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-[var(--muted)]">
-            옵션: <code className="rounded bg-[var(--bg)] px-1 py-0.5">speed=slow|normal|fast</code> (애니메이션 속도).
-            아래 미리보기에서 표시 결과를 확인할 수 있어요(가루·등장 등 스크롤 연동 효과는 완성 상태로 보여줍니다).
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function ChapterForm({ novel, nextNumber, onSaved }: { novel: Novel; nextNumber: number; onSaved: () => void }) {
   const [number, setNumber] = useState(nextNumber);
   const [title, setTitle] = useState('');
@@ -320,23 +280,25 @@ function ChapterForm({ novel, nextNumber, onSaved }: { novel: Novel; nextNumber:
   const [converting, setConverting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
-  const [importHtml, setImportHtml] = useState('');
-  const [importNonce, setImportNonce] = useState(0);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return;
     setErr(''); setConverting(true); setFileName(file.name);
     try {
-      const out = convertMarkers(await convertDocx(file));
-      setImportHtml(out);
-      setImportNonce((n) => n + 1); // 에디터로 불러오기
+      const out = await convertDocx(file);
+      setHtml(out);
       if (!title) setTitle(file.name.replace(/\.docx$/i, ''));
     } catch (e: any) { setErr('변환 실패: ' + e.message); } finally { setConverting(false); }
   }
 
+  useEffect(() => {
+    if (previewRef.current) previewRef.current.innerHTML = html;
+  }, [html]);
+
   async function save() {
     setErr('');
-    if (!html || !html.replace(/<[^>]*>/g, '').trim()) { setErr('내용을 입력하거나 docx를 불러오세요.'); return; }
+    if (!html) { setErr('docx 파일을 먼저 업로드하세요.'); return; }
     if (!title) { setErr('제목을 입력하세요.'); return; }
     setSaving(true);
     try {
@@ -352,16 +314,19 @@ function ChapterForm({ novel, nextNumber, onSaved }: { novel: Novel; nextNumber:
         <div><label className={label}>회차 제목</label><input className={input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 1화 - 시작" /></div>
       </div>
       <div className="mt-3">
-        <label className={label}>원고 불러오기 (.docx) <span className="text-[var(--muted)] font-normal">— 또는 아래 에디터에 직접 작성</span></label>
+        <label className={label}>원고 파일 (.docx)</label>
         <input type="file" accept=".docx" onChange={onFile} className="text-sm" />
         {fileName && <span className="ml-2 text-xs text-[var(--muted)]">{fileName}</span>}
         {converting && <p className="text-sm text-[var(--muted)] mt-1">변환 중…</p>}
       </div>
-      <FxHelp />
-      <div className="mt-3">
-        <label className={label}>본문</label>
-        <EffectEditor onChange={setHtml} importHtml={importHtml} importNonce={importNonce} />
-      </div>
+      {html && (
+        <div className="mt-3">
+          <p className={label}>미리보기</p>
+          <div className="reader-content max-h-72 overflow-auto rounded-lg border border-[var(--border)] bg-white p-4">
+            <div ref={previewRef} />
+          </div>
+        </div>
+      )}
       {err && <p className="text-sm text-red-600 mt-2">{err}</p>}
       <button onClick={save} disabled={saving || converting} className="mt-3 rounded-lg bg-[var(--accent)] text-white px-5 py-2.5 text-sm disabled:opacity-50">
         {saving ? '저장 중…' : '회차 저장'}
