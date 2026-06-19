@@ -1,7 +1,7 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { convertMarkers, EFFECTS } from '@/lib/effects';
-import { applyEffects } from '@/lib/applyEffects';
+import EffectEditor from '@/components/EffectEditor';
 
 type Novel = {
   id: string; slug: string; title: string; author: string; description: string;
@@ -320,29 +320,23 @@ function ChapterForm({ novel, nextNumber, onSaved }: { novel: Novel; nextNumber:
   const [converting, setConverting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
-  const previewRef = useRef<HTMLDivElement>(null);
+  const [importHtml, setImportHtml] = useState('');
+  const [importNonce, setImportNonce] = useState(0);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]; if (!file) return;
     setErr(''); setConverting(true); setFileName(file.name);
     try {
       const out = convertMarkers(await convertDocx(file));
-      setHtml(out);
+      setImportHtml(out);
+      setImportNonce((n) => n + 1); // 에디터로 불러오기
       if (!title) setTitle(file.name.replace(/\.docx$/i, ''));
     } catch (e: any) { setErr('변환 실패: ' + e.message); } finally { setConverting(false); }
   }
 
-  useEffect(() => {
-    const el = previewRef.current;
-    if (!el) return;
-    el.innerHTML = html;
-    if (!html) return;
-    return applyEffects(el, { preview: true });
-  }, [html]);
-
   async function save() {
     setErr('');
-    if (!html) { setErr('docx 파일을 먼저 업로드하세요.'); return; }
+    if (!html || !html.replace(/<[^>]*>/g, '').trim()) { setErr('내용을 입력하거나 docx를 불러오세요.'); return; }
     if (!title) { setErr('제목을 입력하세요.'); return; }
     setSaving(true);
     try {
@@ -358,20 +352,16 @@ function ChapterForm({ novel, nextNumber, onSaved }: { novel: Novel; nextNumber:
         <div><label className={label}>회차 제목</label><input className={input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="예: 1화 - 시작" /></div>
       </div>
       <div className="mt-3">
-        <label className={label}>원고 파일 (.docx)</label>
+        <label className={label}>원고 불러오기 (.docx) <span className="text-[var(--muted)] font-normal">— 또는 아래 에디터에 직접 작성</span></label>
         <input type="file" accept=".docx" onChange={onFile} className="text-sm" />
         {fileName && <span className="ml-2 text-xs text-[var(--muted)]">{fileName}</span>}
         {converting && <p className="text-sm text-[var(--muted)] mt-1">변환 중…</p>}
       </div>
       <FxHelp />
-      {html && (
-        <div className="mt-3">
-          <p className={label}>미리보기</p>
-          <div className="reader-content max-h-72 overflow-auto rounded-lg border border-[var(--border)] bg-white p-4">
-            <div ref={previewRef} />
-          </div>
-        </div>
-      )}
+      <div className="mt-3">
+        <label className={label}>본문</label>
+        <EffectEditor onChange={setHtml} importHtml={importHtml} importNonce={importNonce} />
+      </div>
       {err && <p className="text-sm text-red-600 mt-2">{err}</p>}
       <button onClick={save} disabled={saving || converting} className="mt-3 rounded-lg bg-[var(--accent)] text-white px-5 py-2.5 text-sm disabled:opacity-50">
         {saving ? '저장 중…' : '회차 저장'}

@@ -103,11 +103,11 @@ body:has(.reader-shell) > header { display: none; }
 /* 본문 마커 [fx:name]...[/fx] 가 .fx / data-fx="name" 스팬으로 변환됨.
    글자 단위는 .fx-ch (--i=글자번호, --n=총개수), 스크롤 연동은 --p(0~1). */
 
-.reader-content .fx { white-space: inherit; }
-.reader-content .fx-ch { display: inline-block; white-space: pre; }
+.fx-stage .fx { white-space: inherit; }
+.fx-stage .fx-ch { display: inline-block; white-space: pre; }
 
 /* (1) 떨림 — 공포·추위·분노 */
-.reader-content .fx-shake {
+.fx-stage .fx-shake {
   display: inline-block;
   animation: fx-shake calc(var(--fx-dur, 1) * 0.12s) steps(2, end) infinite;
 }
@@ -120,7 +120,7 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (2) 글리치 — 디지털 붕괴·환청·시스템 메시지 */
-.reader-content .fx-glitch {
+.fx-stage .fx-glitch {
   display: inline-block;
   position: relative;
   animation: fx-glitch calc(var(--fx-dur, 1) * 1s) steps(1, end) infinite;
@@ -136,8 +136,8 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (3) 가루 — 스크롤한 만큼만 흩어짐(되감기 가능) */
-.reader-content .fx-dust { display: inline-block; }
-.reader-content .fx-dust .fx-ch {
+.fx-stage .fx-dust { display: inline-block; }
+.fx-stage .fx-dust .fx-ch {
   --lp: clamp(0, calc(var(--p, 0) * var(--n, 1) * 1.25 - var(--i, 0)), 1);
   opacity: calc(1 - var(--lp));
   transform:
@@ -148,22 +148,22 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (4) 한 글자씩 등장 — 스크롤하면 타자기처럼 (한 번 나오면 유지) */
-.reader-content .fx-type { display: inline-block; }
-.reader-content .fx-type .fx-ch {
+.fx-stage .fx-type { display: inline-block; }
+.fx-stage .fx-type .fx-ch {
   --lp: clamp(0, calc(var(--p, 0) * var(--n, 1) * 1.2 - var(--i, 0)), 1);
   opacity: var(--lp);
   transform: translateY(calc((1 - var(--lp)) * 0.18em));
 }
 
 /* (5) 흐림→또렷 — 스크롤하면 또렷해짐(회상·각성) */
-.reader-content .fx-focus {
+.fx-stage .fx-focus {
   display: inline-block;
   filter: blur(calc((1 - var(--p, 0)) * 5px));
   opacity: calc(0.3 + 0.7 * var(--p, 0));
 }
 
 /* (6) 물결 — 출렁임(꿈·물속) */
-.reader-content .fx-wave .fx-ch {
+.fx-stage .fx-wave .fx-ch {
   animation: fx-wave calc(var(--fx-dur, 1) * 1.8s) ease-in-out infinite;
   animation-delay: calc(var(--i, 0) * -0.08s);
 }
@@ -173,7 +173,7 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (7) 네온 — 색이 흐르는 그라데이션(마법·강조) */
-.reader-content .fx-neon {
+.fx-stage .fx-neon {
   display: inline-block;
   background: linear-gradient(90deg, #ff2d95, #ffd23f, #27e1ff, #a78bfa, #ff2d95);
   background-size: 300% 100%;
@@ -186,33 +186,33 @@ body:has(.reader-shell) > header { display: none; }
 @keyframes fx-neon { to { background-position: 300% 0; } }
 
 /* (8) 검열 — 먹칠로 가렸다가 탭/클릭하면 드러남(금기어) */
-.reader-content .fx-redacted {
+.fx-stage .fx-redacted {
   border-radius: 2px;
   cursor: pointer;
   color: transparent;
   background: currentColor;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
-.reader-content .fx-redacted.fx-revealed {
+.fx-stage .fx-redacted.fx-revealed {
   background: transparent;
   color: inherit;
 }
 
 /* (9) 잉크 — 화면에 들어오면 번지듯 또렷(편지·일기) */
-.reader-content .fx-ink {
+.fx-stage .fx-ink {
   font-family: 'Nanum Myeongjo', serif;
   font-style: italic;
   filter: blur(2.5px);
   opacity: 0.35;
   transition: filter 0.9s ease, opacity 0.9s ease;
 }
-.reader-content .fx-ink.fx-in {
+.fx-stage .fx-ink.fx-in {
   filter: blur(0);
   opacity: 1;
 }
 
 /* (10) 아지랑이 — 열기처럼 일렁임(더위·분노) */
-.reader-content .fx-shimmer {
+.fx-stage .fx-shimmer {
   display: inline-block;
   animation: fx-shimmer calc(var(--fx-dur, 1) * 1.6s) ease-in-out infinite;
 }
@@ -224,8 +224,8 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (11) 흘러내림 — 글자에서 물·피가 떨어짐 */
-.reader-content .fx-drip .fx-ch { position: relative; }
-.reader-content .fx-drip .fx-ch::after {
+.fx-stage .fx-drip .fx-ch { position: relative; }
+.fx-stage .fx-drip .fx-ch::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -246,7 +246,7 @@ body:has(.reader-shell) > header { display: none; }
 }
 
 /* (12) 잔상 — 유령 같은 이중 잔상 */
-.reader-content .fx-ghost {
+.fx-stage .fx-ghost {
   display: inline-block;
   animation: fx-ghost calc(var(--fx-dur, 1) * 2.4s) ease-in-out infinite;
 }
@@ -265,9 +265,45 @@ body:has(.reader-shell) > header { display: none; }
 
 /* 모션 최소화: 자동 반복 애니메이션만 정지(스크롤·탭 기반 효과는 유지) */
 @media (prefers-reduced-motion: reduce) {
-  .reader-content :is(.fx-shake, .fx-glitch, .fx-neon, .fx-shimmer, .fx-ghost),
-  .reader-content :is(.fx-wave, .fx-drip) .fx-ch {
+  .fx-stage :is(.fx-shake, .fx-glitch, .fx-neon, .fx-shimmer, .fx-ghost),
+  .fx-stage :is(.fx-wave, .fx-drip) .fx-ch {
     animation: none !important;
   }
-  .reader-content .fx-drip .fx-ch::after { display: none; }
+  .fx-stage .fx-drip .fx-ch::after { display: none; }
 }
+
+/* ---------- 에디터(편집 모드) — 효과를 라벨/밑줄로 표시 ---------- */
+.fx-editor-content {
+  min-height: 220px;
+  max-height: 60vh;
+  overflow: auto;
+  padding: 12px 14px;
+  outline: none;
+  line-height: 1.9;
+  font-size: 1rem;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.fx-editor-content:focus { outline: none; }
+.fx-editor-content p { margin: 0 0 0.9em; }
+.fx-editor-content .fx {
+  border-bottom: 2px dotted #8b5cf6;
+  background: rgba(139, 92, 246, 0.08);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.fx-editor-content .fx::after {
+  content: attr(data-fx);
+  font-size: 0.6em;
+  vertical-align: super;
+  color: #8b5cf6;
+  margin-left: 1px;
+  font-style: normal;
+  font-weight: 600;
+}
+/* 편집 모드에선 실제 연출을 끄고(읽기 쉽게) 색만 살림 */
+.fx-editor-content .fx-redacted { color: inherit; background: rgba(139, 92, 246, 0.08); }
+.fx-editor-content .fx-neon {
+  -webkit-text-fill-color: currentColor; color: inherit; background: rgba(139, 92, 246, 0.08); animation: none;
+}
+.fx-editor-content .fx-ink { filter: none; opacity: 1; }

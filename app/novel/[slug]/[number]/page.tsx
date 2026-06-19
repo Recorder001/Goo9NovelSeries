@@ -35,7 +35,7 @@ export default async function ReaderPage({ params }: { params: Promise<{ slug: s
           <p className="text-sm text-[var(--muted)]">{chapter.number}화</p>
           <h1 className="mt-1 font-serif text-2xl font-extrabold">{chapter.title}</h1>
         </header>
-        <div className="reader-content" dangerouslySetInnerHTML={{ __html: chapter.contentHtml }} />
+        <div className="reader-content fx-stage" dangerouslySetInnerHTML={{ __html: chapter.contentHtml }} />
         <ReaderEffects />
       </article>
 
