@@ -72,10 +72,11 @@ export function applyEffects(root: HTMLElement, opts: ApplyOpts = {}): () => voi
   const fxEls = Array.from(root.querySelectorAll<HTMLElement>('.fx'));
   if (fxEls.length === 0) return () => {};
 
-  // 1) 속도 옵션 → --fx-dur
+  // 1) 옵션 적용: 속도 → --fx-dur, 색(네온) → --fx-color
   fxEls.forEach((el) => {
     const sp = el.dataset.speed;
     if (sp && SPEED[sp]) el.style.setProperty('--fx-dur', SPEED[sp]);
+    if (el.dataset.color) el.style.setProperty('--fx-color', el.dataset.color);
   });
 
   // 2) 글자 단위 분할

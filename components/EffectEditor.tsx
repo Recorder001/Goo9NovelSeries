@@ -28,6 +28,7 @@ export default function EffectEditor({ initialContent = '', onChange, importHtml
   const [preview, setPreview] = useState(false);
   const [fx, setFx] = useState<string>(EFFECTS[0].name);
   const [speed, setSpeed] = useState('normal');
+  const [color, setColor] = useState('#27e1ff');
   const previewRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -66,7 +67,8 @@ export default function EffectEditor({ initialContent = '', onChange, importHtml
   const tbtn = 'px-2 py-1 rounded border border-[var(--border)] text-xs hover:bg-[var(--bg)] transition';
   const active = (on: boolean) => (on ? ' bg-[var(--bg)] border-[var(--accent)]' : '');
 
-  const applyFx = () => editor.chain().focus().setFx(fx, speed === 'normal' ? undefined : speed).run();
+  const applyFx = () =>
+    editor.chain().focus().setFx(fx, speed === 'normal' ? undefined : speed, fx === 'neon' ? color : undefined).run();
   const removeFx = () => editor.chain().focus().unsetFx().run();
 
   return (
@@ -84,6 +86,11 @@ export default function EffectEditor({ initialContent = '', onChange, importHtml
         <select value={speed} onChange={(e) => setSpeed(e.target.value)} className="rounded border border-[var(--border)] bg-[var(--surface)] text-xs px-1.5 py-1" disabled={preview}>
           {SPEEDS.map((s) => <option key={s.v} value={s.v}>{s.label}</option>)}
         </select>
+        {fx === 'neon' && (
+          <label className="flex items-center gap-1 text-xs" title="네온 발광 색">
+            <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-6 w-7 rounded border border-[var(--border)] bg-transparent p-0" disabled={preview} />
+          </label>
+        )}
         <button type="button" className={tbtn} onClick={applyFx} disabled={preview}>효과 적용</button>
         <button type="button" className={tbtn} onClick={removeFx} disabled={preview}>효과 제거</button>
         <span className="flex-1" />

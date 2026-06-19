@@ -29,7 +29,7 @@ export const EFFECTS: FxInfo[] = [
 export const KNOWN_FX: Set<string> = new Set(EFFECTS.map((e) => e.name));
 
 // 글자 단위 분할이 필요한 효과
-export const NEEDS_SPLIT: Set<string> = new Set(['dust', 'type', 'wave', 'drip']);
+export const NEEDS_SPLIT: Set<string> = new Set(['dust', 'type', 'wave', 'drip', 'shimmer']);
 
 // 글자별 무작위 방향(흩어짐)이 필요한 효과
 export const RANDOM_DIR: Set<string> = new Set(['dust']);
@@ -42,11 +42,12 @@ export type ScrollCfg = {
   previewP: number; // 어드민 미리보기에서 보여줄 고정 진행도
 };
 export const SCROLL_LINKED: Record<string, ScrollCfg> = {
-  // 가루: 읽는 구간(중앙)에서는 멀쩡, 화면 위로 빠져나갈 때만 흩어짐
-  dust: { from: 0.3, to: -0.1, latch: false, previewP: 0 },
-  // 등장/또렷: 아래에서 올라와 읽는 위치에 닿을 때 완성(한 번 완성되면 유지)
-  type: { from: 0.95, to: 0.6, latch: true, previewP: 1 },
-  focus: { from: 0.95, to: 0.6, latch: true, previewP: 1 },
+  // 가루: 읽는 구간에선 멀쩡, 화면 윗부분에서 흩어짐(완료 지점을 화면 안쪽으로)
+  dust: { from: 0.5, to: 0.15, latch: false, previewP: 0 },
+  // 등장: 아래에서 올라오며 한 자씩 등장, 스크롤 되돌리면 다시 사라짐(롤백)
+  type: { from: 0.9, to: 0.55, latch: false, previewP: 1 },
+  // 또렷: 읽는 위치로 올라오며 또렷, 되돌리면 다시 흐려짐(롤백)
+  focus: { from: 0.9, to: 0.55, latch: false, previewP: 1 },
 };
 
 function escAttr(s: string): string {

@@ -6,7 +6,7 @@ import { Mark, mergeAttributes } from '@tiptap/core';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     fx: {
-      setFx: (name: string, speed?: string) => ReturnType;
+      setFx: (name: string, speed?: string, color?: string) => ReturnType;
       unsetFx: () => ReturnType;
     };
   }
@@ -28,6 +28,11 @@ export const FxMark = Mark.create({
         parseHTML: (el) => (el as HTMLElement).getAttribute('data-speed'),
         renderHTML: () => ({}),
       },
+      color: {
+        default: null,
+        parseHTML: (el) => (el as HTMLElement).getAttribute('data-color'),
+        renderHTML: () => ({}),
+      },
     };
   },
 
@@ -42,15 +47,16 @@ export const FxMark = Mark.create({
       'data-fx': name ?? '',
     };
     if (mark.attrs.speed) attrs['data-speed'] = mark.attrs.speed as string;
+    if (mark.attrs.color) attrs['data-color'] = mark.attrs.color as string;
     return ['span', mergeAttributes(attrs), 0];
   },
 
   addCommands() {
     return {
       setFx:
-        (name, speed) =>
+        (name, speed, color) =>
         ({ commands }) =>
-          commands.setMark(this.name, { name, speed: speed || null }),
+          commands.setMark(this.name, { name, speed: speed || null, color: color || null }),
       unsetFx:
         () =>
         ({ commands }) =>
